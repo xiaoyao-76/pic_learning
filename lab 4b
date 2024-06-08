@@ -1,0 +1,102 @@
+#include "p16f84a.inc"
+
+; CONFIG
+; __config 0x3FF1
+ __CONFIG _FOSC_XT & _WDTE_OFF & _PWRTE_ON & _CP_OFF
+ 
+res_vect code 0x0000
+ goto start
+
+cnt equ 0X40
+ 
+R1 EQU 0x25
+R2 EQU 0x27
+DELAY
+ MOVLW D'200'
+ MOVWF R1
+AGAIN
+ MOVLW D'250'
+ MOVWF R2
+HERE
+ DECFSZ R2
+ GOTO HERE
+ DECFSZ R1
+ GOTO AGAIN
+ RETURN
+
+start
+ banksel TRISA
+ movlw 0x01
+ movwf TRISA
+ movlw 0x00
+ movwf TRISB
+ 
+ banksel PORTB
+ movlw 0x00
+ movwf PORTB
+ clrf cnt
+ call displaynum1
+ 
+loop1
+ btfsc PORTA,0
+ incfsz cnt
+ call displaynum1
+ goto loop1
+ 
+loop2
+ btfsc PORTA,0
+ decf cnt
+ call displaynum2
+ goto loop2
+ 
+displaynum1
+ call checkcnt1
+ call get7seg
+ movwf PORTB
+ call DELAY
+ return
+ 
+displaynum2
+ call checkcnt2
+ call get7seg
+ movwf PORTB
+ call DELAY
+ return
+ 
+checkcnt1
+ movlw 0x09
+ xorwf cnt,0
+ btfss STATUS,2
+ return
+ movlw 0x6F
+ movwf PORTB
+ call DELAY
+ goto loop2
+ return
+ 
+checkcnt2
+ movlw 0x00
+ xorwf cnt,0
+ btfss STATUS,2
+ return
+ movlw 0x3F
+ movwf PORTB
+ call DELAY
+ goto loop1
+ return
+ 
+get7seg
+ movf cnt,0
+ addwf PCL
+ retlw 0x3F
+ retlw 0x06
+ retlw 0x5B
+ retlw 0x4F
+ retlw 0x66
+ retlw 0x6D
+ retlw 0x7D
+ retlw 0x07
+ retlw 0x7F
+ retlw 0x6F
+
+ end
