@@ -1,0 +1,339 @@
+#include "p16f84a.inc"
+
+; CONFIG
+; __config 0x3FF5
+ __CONFIG _FOSC_XT & _WDTE_ON & _PWRTE_ON & _CP_OFF
+ 
+ org 0x00
+ goto main
+ 
+ R1 equ 0x25
+ R2 equ 0x27
+ 
+main
+ banksel TRISB
+ movlw 0x00
+ movwf TRISB
+ movlw 0x03
+ movwf TRISA
+ 
+ banksel PORTA
+ clrf PORTA
+ 
+start
+checksw
+ movlw 0x80
+ movwf PORTB
+ btfss PORTA,0
+ call pwm1
+ btfss PORTA,1
+ call pwm2
+ goto checksw
+ 
+delay
+ movlw D'200'
+ movwf R1
+again
+ movlw D'250'
+ movwf R2
+here
+ nop
+ nop
+ decfsz R2
+ goto here
+ decfsz R1
+ goto again
+ return
+ 
+pwm1
+ bcf PORTB,5
+ bsf PORTB,6
+ call delay
+ call delay
+ bcf PORTB,6
+ call delay
+ call delay
+ return
+ 
+pwm2
+ bsf PORTB,5
+ bcf PORTB,6
+ call delay
+ bcf PORTB,5
+ call delay
+ return
+
+lastline
+ end
+
+
+#include "p16f84a.inc"
+
+; CONFIG
+; __config 0x3FF5
+ __CONFIG _FOSC_XT & _WDTE_ON & _PWRTE_ON & _CP_OFF
+ 
+ org 0x00
+ goto main
+ 
+ R1 equ 0x25
+ R2 equ 0x27
+ 
+main
+ banksel TRISB
+ movlw 0x00
+ movwf TRISB
+ movlw 0x03
+ movwf TRISA
+ 
+start
+ banksel PORTB
+ movlw 0x80
+ movwf PORTB
+ 
+checksw1
+ btfsc PORTA,0
+ goto checksw2
+ call pwm1
+ goto checksw1
+ 
+checksw2
+ btfsc PORTA,1
+ goto checksw1
+ call pwm2
+ goto checksw2
+ 
+delay
+ movlw d'200'
+ movwf R1
+again
+ movlw d'250'
+ movwf R2
+here
+ nop
+ nop
+ decfsz R2
+ goto here
+ decfsz R1
+ goto again
+ return
+ 
+pwm1
+ bcf PORTB,5
+ bsf PORTB,6
+ call delay
+ call delay
+ bcf PORTB,6
+ call delay
+ return
+ 
+pwm2
+ bsf PORTB,5
+ bcf PORTB,6
+ call delay
+ bcf PORTB,5
+ call delay
+ return
+
+lastline
+ end
+
+
+#include "p16f84a.inc"
+
+; CONFIG
+; __config 0x3FF5
+ __CONFIG _FOSC_XT & _WDTE_ON & _PWRTE_ON & _CP_OFF
+ 
+ org 0x00
+ goto main
+ 
+ R1 equ 0x25
+ R2 equ 0x27
+ 
+main
+ banksel TRISB
+ movlw 0x00
+ movwf TRISB
+ movlw 0x1F
+ movwf TRISA
+ 
+ banksel PORTA
+ 
+start
+checksw1
+ btfss PORTA,0
+ goto checksw4
+ movlw 0x80
+ movwf PORTB
+ 
+checksw2
+ btfsc PORTA,1
+ goto checksw3
+ call pwm1
+ goto checksw2
+ 
+checksw3
+ btfsc PORTA,2
+ goto checksw1
+ call pwm2
+ goto checksw3
+ 
+checksw4
+ btfsc PORTA,0
+ goto checksw1
+ movlw 0x04
+ movwf PORTB
+ 
+checksw5
+ btfsc PORTA,3
+ goto checksw6
+ call pwm3
+ goto checksw5
+ 
+checksw6
+ btfsc PORTA,4
+ goto checksw4
+ call pwm4
+ goto checksw6
+ 
+delay
+ movlw d'200'
+ movwf R1
+again
+ movlw d'250'
+ movwf R2
+here
+ nop
+ nop
+ decfsz R2
+ goto here
+ decfsz R1
+ goto again
+ return
+ 
+pwm1
+ bcf PORTB,5
+ bsf PORTB,6
+ call delay
+ bcf PORTB,6
+ call delay
+ return
+ 
+pwm2
+ bcf PORTB,6
+ bsf PORTB,5
+ call delay
+ bcf PORTB,5
+ call delay
+ return
+ 
+pwm3
+ bcf PORTB,3
+ bsf PORTB,4
+ call delay
+ bcf PORTB,4
+ call delay
+ return
+ 
+pwm4
+ bcf PORTB,4
+ bsf PORTB,3
+ call delay
+ bcf PORTB,3
+ call delay
+ return
+
+lastline
+ end
+
+
+#include "p16f84a.inc"
+
+; CONFIG
+; __config 0x3FF5
+ __CONFIG _FOSC_XT & _WDTE_ON & _PWRTE_ON & _CP_OFF
+ 
+ org 0x00
+ goto main
+ 
+ R1 equ 0x25
+ R2 equ 0x27
+ 
+main
+ banksel TRISB
+ movlw 0x00
+ movwf TRISB
+ movlw 0x07
+ movwf TRISA
+ 
+start
+ banksel PORTB
+ movlw 0x80
+ movwf PORTB
+ 
+checksw1
+ btfsc PORTA,0
+ goto checksw2
+ call pwm1
+ goto checksw1
+ 
+checksw2
+ btfsc PORTA,1
+ goto checksw1
+ call pwm2
+ goto checksw2
+ 
+delay
+ movlw d'200'
+ movwf R1
+again
+ movlw d'250'
+ movwf R2
+here
+ nop
+ nop
+ decfsz R2
+ goto here
+ decfsz R1
+ goto again
+ return
+ 
+pwm1
+ btfss PORTA,2
+ goto pwm12
+ bcf PORTB,5
+ bsf PORTB,6
+ call delay
+ bcf PORTB,6
+ call delay
+ return
+pwm12
+ bcf PORTB,5
+ bsf PORTB,6
+ call delay
+ call delay
+ bcf PORTB,6
+ call delay
+ return
+ 
+pwm2
+ btfss PORTA,2
+ goto pwm22
+ bcf PORTB,6
+ bsf PORTB,5
+ call delay
+ bcf PORTB,5
+ call delay
+ return
+pwm22
+ bcf PORTB,6
+ bsf PORTB,5
+ call delay
+ call delay
+ bcf PORTB,5
+ call delay
+ return
+
+lastline
+ end
